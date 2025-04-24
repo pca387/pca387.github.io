@@ -2,14 +2,66 @@
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Moje teksty PDF</title>
+    <title>Moje zasoby</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: radial-gradient(ellipse at top, #b2fefa, #0ed2f7);
+            color: #003f3f;
+        }
+        header {
+            background: rgba(0, 128, 128, 0.8);
+            padding: 2rem;
+            text-align: center;
+            color: white;
+            background-image: url('https://www.transparenttextures.com/patterns/cubes.png');
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.2rem;
+        }
+        section {
+            margin: 2rem;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 1rem;
+            padding: 1.5rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        h2 {
+            color: #005f5f;
+            border-bottom: 2px solid #00bfbf;
+            padding-bottom: 0.3rem;
+        }
+        ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        li {
+            margin: 0.5rem 0;
+        }
+        a {
+            color: #007777;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Witaj na mojej stronie!</h1>
-    <p>Tutaj znajdziesz moje teksty w formacie PDF:</p>
-    <ul>
-        <li><a href="pdf/przyklad.pdf">przyklad.pdf</a></li>
-    </ul>
-    <p>Możesz dodać więcej plików do folderu <code>pdf/</code>.</p>
+    <header>
+        <h1>Moje zasoby</h1>
+        <p>Struktura tematyczna: kategorie i podkategorie</p>
+    </header>
+
+    <section>
+        <h2>Kategoria: 1</h2>
+        <ul>
+            <li><a href="pdf/1/przyklad.pdf">Podkategoria A – przyklad.pdf</a></li>
+        </ul>
+    </section>
 </body>
 </html>
