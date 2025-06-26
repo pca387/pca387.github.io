@@ -354,7 +354,7 @@
           <label for="fileUpload">Wybierz plik</label>
           <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.zip,.rar">
           <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">
-            Uwaga: Pliki są przechowywane lokalnie w przeglądarce (max ~5MB na plik)
+            Max ~4MB. Większe pliki wgraj na Google Drive i użyj linku.
           </small>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">Dodaj dokument</button>
@@ -492,11 +492,56 @@
               if (file.type === 'link') {
                 window.open(file.url, '_blank');
               } else {
-                // Dla plików lokalnych - tworzenie tymczasowego linku do pobrania
-                const link = document.createElement('a');
-                link.href = file.data;
-                link.download = file.fileName || file.name;
-                link.click();
+                // Dla plików lokalnych
+                if (file.fileType === 'application/pdf') {
+                  // Otwórz PDF w nowej karcie
+                  const newWindow = window.open();
+                  newWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>${file.name}</title>
+                      <style>
+                        body { margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
+                        .toolbar { 
+                          background: #333; 
+                          color: white; 
+                          padding: 10px 20px; 
+                          display: flex; 
+                          justify-content: space-between; 
+                          align-items: center;
+                        }
+                        .back-btn {
+                          background: #03a9f4;
+                          color: white;
+                          border: none;
+                          padding: 8px 20px;
+                          border-radius: 5px;
+                          cursor: pointer;
+                          font-size: 16px;
+                          text-decoration: none;
+                          display: inline-block;
+                        }
+                        .back-btn:hover { background: #0288d1; }
+                        iframe { flex: 1; width: 100%; border: none; }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="toolbar">
+                        <h3>${file.name}</h3>
+                        <a href="${window.location.href}" class="back-btn">← Powrót</a>
+                      </div>
+                      <iframe src="${file.data}"></iframe>
+                    </body>
+                    </html>
+                  `);
+                } else {
+                  // Inne pliki - pobierz
+                  const link = document.createElement('a');
+                  link.href = file.data;
+                  link.download = file.fileName || file.name;
+                  link.click();
+                }
               }
             }
           });
@@ -508,6 +553,20 @@
       // Aktualizacja licznika na stronie głównej
       localStorage.setItem('fileCount_dokumenty', files.length);
     }
+    
+    // Pokazuj rozmiar wybranego pliku
+    fileUploadInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const small = document.querySelector('#uploadGroup small');
+        if (sizeMB > 4) {
+          small.innerHTML = `<span style="color: #f44336;">⚠️ Plik: ${sizeMB}MB - ZA DUŻY! Max 4MB. Użyj Google Drive.</span>`;
+        } else {
+          small.innerHTML = `✓ Plik: ${sizeMB}MB - OK`;
+        }
+      }
+    });
     
     // Przełączanie między linkiem a uploadem
     const radioButtons = document.querySelectorAll('input[name="fileType"]');
@@ -571,6 +630,15 @@
       } else {
         const file = fileUploadInput.files[0];
         if (!file) return;
+        
+        // Sprawdź rozmiar pliku (4MB limit)
+        const maxSize = 4 * 1024 * 1024; // 4MB
+        if (file.size > maxSize) {
+          alert(`Plik jest za duży (${(file.size / 1024 / 1024).toFixed(1)}MB). 
+                 Maximum to 4MB. 
+                 Dla większych plików użyj Google Drive i dodaj link.`);
+          return;
+        }
         
         // Konwersja pliku do Base64
         const reader = new FileReader();
