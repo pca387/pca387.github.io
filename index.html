@@ -3,114 +3,319 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Moje Zasoby</title>
+  <title>Moje Zasoby - System Zarządzania Dokumentami</title>
+  <meta name="description" content="Osobisty system zarządzania dokumentami, notatkami i plikami. Organizuj swoje zasoby w kategoriach: duchowość, praca, archiwum, projekty, notatki, dokumenty.">
+  <meta name="keywords" content="zarządzanie dokumentami, organizacja plików, notatki, archiwum">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
-  overflow-x: hidden;
-  min-height: 100vh;
-  position: relative;
-  color: #034d5d;
-}
-header {
-  text-align: center;
-  padding: 4rem 1rem 2rem;
-}
-main {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
-  padding: 3rem 2rem;
-  max-width: 1200px;
-  margin: auto;
-}
-.card, .file-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(10px);
-  border-radius: 1rem;
-  padding: 2rem;
-  text-align: center;
-  font-weight: 600;
-  font-size: 1.2rem;
-  text-decoration: none;
-  color: #034d5d;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-  transition: all 0.3s ease;
-}
-.card:hover, .file-card:hover {
-  background: rgba(255, 255, 255, 0.8);
-  transform: translateY(-5px);
-}
-canvas {
-  position: fixed;
-  top: 0; left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  pointer-events: none;
-}
-</style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    :root {
+      --primary-color: #034d5d;
+      --secondary-color: #03a9f4;
+      --bg-gradient-start: #b3e5fc;
+      --bg-gradient-end: #e1f5fe;
+      --card-bg: rgba(255, 255, 255, 0.6);
+      --card-hover-bg: rgba(255, 255, 255, 0.8);
+      --shadow: 0 8px 20px rgba(0,0,0,0.1);
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
+      overflow-x: hidden;
+      min-height: 100vh;
+      position: relative;
+      color: var(--primary-color);
+    }
+    
+    header {
+      text-align: center;
+      padding: 3rem 1rem 2rem;
+      position: relative;
+      z-index: 10;
+    }
+    
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 700;
+    }
+    
+    .search-container {
+      margin: 2rem auto;
+      max-width: 500px;
+      position: relative;
+    }
+    
+    .search-box {
+      width: 100%;
+      padding: 1rem 3rem 1rem 1.5rem;
+      border: none;
+      border-radius: 2rem;
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      font-size: 1rem;
+      color: var(--primary-color);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+    }
+    
+    .search-box:focus {
+      outline: none;
+      background: var(--card-hover-bg);
+      transform: translateY(-2px);
+    }
+    
+    .search-icon {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 24px;
+      height: 24px;
+      opacity: 0.5;
+    }
+    
+    main {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 2rem;
+      padding: 2rem;
+      max-width: 1200px;
+      margin: auto;
+      position: relative;
+      z-index: 10;
+    }
+    
+    .card {
+      background: var(--card-bg);
+      backdrop-filter: blur(10px);
+      border-radius: 1rem;
+      padding: 2rem;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.2rem;
+      text-decoration: none;
+      color: var(--primary-color);
+      box-shadow: var(--shadow);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background: var(--secondary-color);
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    
+    .card:hover {
+      background: var(--card-hover-bg);
+      transform: translateY(-5px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.15);
+    }
+    
+    .card:hover::before {
+      transform: translateX(0);
+    }
+    
+    .file-count {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 400;
+      margin-top: 0.5rem;
+      opacity: 0.7;
+    }
+    
+    canvas {
+      position: fixed;
+      top: 0; 
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    @media (max-width: 768px) {
+      h1 { font-size: 2rem; }
+      main { grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
+      .card { padding: 1.5rem; font-size: 1.1rem; }
+    }
+  </style>
 </head>
 <body>
-<canvas id="network"></canvas>
-<header>
-  <h1>Moje Zasoby</h1>
-  <p>Teksty - Archiwum - Dokumenty</p>
-</header>
-<main>
-<a href="duchowosc.html" class="card">Duchowość</a>
-<a href="praca.html" class="card">Praca</a>
-<a href="archiwum.html" class="card">Archiwum</a>
-<a href="projekty.html" class="card">Projekty</a>
-<a href="notatki.html" class="card">Notatki</a>
-<a href="inne.html" class="card">Inne</a>
-</main>
-<script>
-const canvas = document.getElementById('network');
-const ctx = canvas.getContext('2d');
-let width, height, particles;
-function init() {
-  width = window.innerWidth;
-  height = window.innerHeight;
-  canvas.width = width;
-  canvas.height = height;
-  particles = Array.from({length: 60}, () => ({
-    x: Math.random() * width,
-    y: Math.random() * height,
-    vx: (Math.random() - 0.5) * 0.7,
-    vy: (Math.random() - 0.5) * 0.7
-  }));
-}
-function animate() {
-  ctx.clearRect(0, 0, width, height);
-  for (let p of particles) {
-    p.x += p.vx;
-    p.y += p.vy;
-    if (p.x < 0 || p.x > width) p.vx *= -1;
-    if (p.y < 0 || p.y > height) p.vy *= -1;
-  }
-  for (let i = 0; i < particles.length; i++) {
-    for (let j = i + 1; j < particles.length; j++) {
-      let dx = particles[i].x - particles[j].x;
-      let dy = particles[i].y - particles[j].y;
-      let dist = Math.sqrt(dx * dx + dy * dy);
-      if (dist < 120) {
-        ctx.strokeStyle = 'rgba(3, 77, 93, ' + (1 - dist / 120) + ')';
-        ctx.lineWidth = 1;
-        ctx.beginPath();
-        ctx.moveTo(particles[i].x, particles[i].y);
-        ctx.lineTo(particles[j].x, particles[j].y);
-        ctx.stroke();
-      }
+  <canvas id="network"></canvas>
+  
+  <header>
+    <h1>Moje Zasoby</h1>
+    <p>Teksty - Archiwum - Dokumenty</p>
+    
+    <div class="search-container">
+      <input type="text" class="search-box" id="searchInput" placeholder="Szukaj w zasobach...">
+      <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="11" cy="11" r="8"></circle>
+        <path d="m21 21-4.35-4.35"></path>
+      </svg>
+    </div>
+  </header>
+  
+  <main id="categoriesGrid">
+    <a href="duchowosc.html" class="card" data-category="duchowosc">
+      Duchowość
+      <span class="file-count">3 pliki</span>
+    </a>
+    <a href="praca.html" class="card" data-category="praca">
+      Praca
+      <span class="file-count">3 pliki</span>
+    </a>
+    <a href="archiwum.html" class="card" data-category="archiwum">
+      Archiwum
+      <span class="file-count">3 pliki</span>
+    </a>
+    <a href="projekty.html" class="card" data-category="projekty">
+      Projekty
+      <span class="file-count">3 pliki</span>
+    </a>
+    <a href="notatki.html" class="card" data-category="notatki">
+      Notatki
+      <span class="file-count">3 pliki</span>
+    </a>
+    <a href="dokumenty.html" class="card" data-category="dokumenty">
+      Dokumenty
+      <span class="file-count">0 plików</span>
+    </a>
+    <a href="inne.html" class="card" data-category="inne">
+      Inne
+      <span class="file-count">3 pliki</span>
+    </a>
+  </main>
+  
+  <script>
+    // Animacja sieci cząsteczek - zoptymalizowana
+    const canvas = document.getElementById('network');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles, animationId;
+    
+    function init() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      
+      // Zmniejszona liczba cząsteczek dla lepszej wydajności
+      const particleCount = Math.min(40, Math.floor((width * height) / 20000));
+      
+      particles = Array.from({length: particleCount}, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
+      }));
     }
-  }
-  requestAnimationFrame(animate);
-}
-window.addEventListener('resize', init);
-init();
-animate();
-</script>
-</body></html>
+    
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      
+      // Aktualizacja pozycji
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+      }
+      
+      // Rysowanie połączeń
+      ctx.strokeStyle = 'rgba(3, 77, 93, 0.15)';
+      ctx.lineWidth = 1;
+      
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 120) {
+            ctx.globalAlpha = 1 - dist / 120;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    // Wyszukiwarka
+    const searchInput = document.getElementById('searchInput');
+    const categories = document.querySelectorAll('.card');
+    
+    searchInput.addEventListener('input', (e) => {
+      const searchTerm = e.target.value.toLowerCase();
+      
+      categories.forEach(card => {
+        const categoryName = card.textContent.toLowerCase();
+        if (categoryName.includes(searchTerm)) {
+          card.style.display = 'block';
+          card.style.animation = 'fadeIn 0.3s ease';
+        } else {
+          card.style.display = 'none';
+        }
+      });
+    });
+    
+    // Zapisywanie liczby plików w localStorage
+    function updateFileCounts() {
+      categories.forEach(card => {
+        const category = card.dataset.category;
+        const count = localStorage.getItem(`fileCount_${category}`) || '3';
+        const fileCountSpan = card.querySelector('.file-count');
+        if (fileCountSpan) {
+          fileCountSpan.textContent = count === '1' ? '1 plik' : `${count} pliki`;
+        }
+      });
+    }
+    
+    // Animacja fade-in
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+    `;
+    document.head.appendChild(style);
+    
+    // Inicjalizacja
+    window.addEventListener('resize', () => {
+      cancelAnimationFrame(animationId);
+      init();
+      animate();
+    });
+    
+    init();
+    animate();
+    updateFileCounts();
+    
+    // Optymalizacja wydajności - zatrzymanie animacji gdy strona niewidoczna
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationId);
+      } else {
+        animate();
+      }
+    });
+  </script>
+</body>
+</html>
