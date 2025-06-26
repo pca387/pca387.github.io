@@ -363,6 +363,46 @@
   </div>
   
   <script>
+    // System autoryzacji z dostępem dla AI
+    (function() {
+      const AUTH_KEY = 'siteAuthenticated';
+      const AI_TOKEN = 'ai_access_2024';
+      const PASSWORD_PAGE = 'auth.html';
+      
+      // Sprawdź token AI w URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const token = urlParams.get('token');
+      
+      if (token === AI_TOKEN) {
+        // AI ma dostęp - zapisz tymczasową autoryzację
+        sessionStorage.setItem(AUTH_KEY, Date.now().toString());
+        return; // Kontynuuj ładowanie strony
+      }
+      
+      // Sprawdź autoryzację użytkownika
+      const authData = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
+      
+      if (!authData) {
+        // Brak autoryzacji - przekieruj do strony logowania
+        const returnUrl = encodeURIComponent(window.location.href);
+        window.location.href = `${PASSWORD_PAGE}?return=${returnUrl}`;
+        return;
+      }
+      
+      // Sprawdź czy autoryzacja nie wygasła (24h)
+      if (localStorage.getItem(AUTH_KEY)) {
+        const authTime = parseInt(localStorage.getItem(AUTH_KEY));
+        const dayInMs = 24 * 60 * 60 * 1000;
+        
+        if (Date.now() - authTime > dayInMs) {
+          localStorage.removeItem(AUTH_KEY);
+          const returnUrl = encodeURIComponent(window.location.href);
+          window.location.href = `${PASSWORD_PAGE}?return=${returnUrl}`;
+          return;
+        }
+      }
+    })();
+    
     // Animacja sieci - taka sama jak w index.html
     const canvas = document.getElementById('network');
     const ctx = canvas.getContext('2d');
@@ -394,9 +434,6 @@
         if (p.y < 0 || p.y > height) p.vy *= -1;
       }
       
-      ctx.strokeStyle = 'rgba(3, 77, 93, 0.15)';
-      ctx.lineWidth = 1;
-      
       for (let i = 0; i < particles.length; i++) {
         for (let j = i + 1; j < particles.length; j++) {
           const dx = particles[i].x - particles[j].x;
@@ -404,7 +441,8 @@
           const dist = Math.sqrt(dx * dx + dy * dy);
           
           if (dist < 120) {
-            ctx.globalAlpha = 1 - dist / 120;
+            ctx.strokeStyle = 'rgba(3, 77, 93, ' + (1 - dist / 120) + ')';
+            ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(particles[i].x, particles[i].y);
             ctx.lineTo(particles[j].x, particles[j].y);

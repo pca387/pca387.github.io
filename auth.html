@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
+  <title>Moje Zasoby - Autoryzacja</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #034d5d;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .auth-container {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 3rem;
+      border-radius: 1rem;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      position: relative;
+      z-index: 10;
+    }
+    
+    h1 {
+      margin-bottom: 2rem;
+      font-size: 2rem;
+      color: #034d5d;
+    }
+    
+    .lock-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    .password-input {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      border: 2px solid #e0e0e0;
+      border-radius: 0.5rem;
+      margin-bottom: 1rem;
+      transition: border-color 0.3s ease;
+    }
+    
+    .password-input:focus {
+      outline: none;
+      border-color: #03a9f4;
+    }
+    
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: #03a9f4;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .submit-btn:hover {
+      background: #0288d1;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(3, 169, 244, 0.3);
+    }
+    
+    .error-message {
+      color: #f44336;
+      margin-top: 1rem;
+      font-size: 0.9rem;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .error-message.show {
+      opacity: 1;
+    }
+    
+    .info-text {
+      margin-top: 2rem;
+      font-size: 0.85rem;
+      color: #666;
+      padding: 1rem;
+      background: rgba(3, 169, 244, 0.1);
+      border-radius: 0.5rem;
+    }
+    
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
+    
+    /* Animacja pojawiania się */
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    .auth-container {
+      animation: fadeIn 0.6s ease;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="network"></canvas>
+  
+  <div class="auth-container">
+    <div class="lock-icon">🔒</div>
+    <h1>Autoryzacja</h1>
+    
+    <form id="authForm">
+      <input 
+        type="password" 
+        id="passwordInput" 
+        class="password-input" 
+        placeholder="Wprowadź hasło"
+        autocomplete="current-password"
+        autofocus
+      >
+      <button type="submit" class="submit-btn">Zaloguj się</button>
+      <p class="error-message" id="errorMessage">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+    </form>
+    
+    <div class="info-text">
+      Ta strona jest chroniona hasłem.<br>
+      Sesja wygasa po 24 godzinach.
+    </div>
+  </div>
+
+  <script>
+    // Animacja tła - taka sama jak na innych stronach
+    const canvas = document.getElementById('network');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles;
+    
+    function init() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      particles = Array.from({length: 60}, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.7,
+        vy: (Math.random() - 0.5) * 0.7
+      }));
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+      }
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          let dx = particles[i].x - particles[j].x;
+          let dy = particles[i].y - particles[j].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            ctx.strokeStyle = 'rgba(3, 77, 93, ' + (1 - dist / 120) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      requestAnimationFrame(animate);
+    }
+    
+    window.addEventListener('resize', init);
+    init();
+    animate();
+    
+    // System autoryzacji
+    const CORRECT_PASSWORD = 'ivwewmya'; // ZMIEŃ NA SWOJE HASŁO!
+    const AUTH_STORAGE_KEY = 'siteAuthenticated';
+    const AI_TOKEN = 'ai_access_2025'; // Token dla dostępu AI
+    
+    // Sprawdź token AI w URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const token = urlParams.get('token');
+    const returnUrl = urlParams.get('return');
+    
+    if (token === AI_TOKEN) {
+      // AI ma dostęp - zapisz autoryzację i przekieruj
+      sessionStorage.setItem(AUTH_STORAGE_KEY, Date.now().toString());
+      if (returnUrl) {
+        window.location.href = decodeURIComponent(returnUrl);
+      } else {
+        window.location.href = 'index.html';
+      }
+    }
+    
+    // Sprawdź czy użytkownik jest już zalogowany
+    function checkExistingAuth() {
+      const authData = localStorage.getItem(AUTH_STORAGE_KEY);
+      if (authData) {
+        const authTime = parseInt(authData);
+        if (Date.now() - authTime < 24 * 60 * 60 * 1000) {
+          // Użytkownik jest zalogowany - przekieruj
+          if (returnUrl) {
+            window.location.href = decodeURIComponent(returnUrl);
+          } else {
+            window.location.href = 'index.html';
+          }
+        } else {
+          // Sesja wygasła
+          localStorage.removeItem(AUTH_STORAGE_KEY);
+        }
+      }
+    }
+    
+    // Obsługa formularza
+    document.getElementById('authForm').addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const password = document.getElementById('passwordInput').value;
+      const errorMessage = document.getElementById('errorMessage');
+      
+      if (password === CORRECT_PASSWORD) {
+        // Zapisz autoryzację
+        localStorage.setItem(AUTH_STORAGE_KEY, Date.now().toString());
+        
+        // Przekieruj
+        if (returnUrl) {
+          window.location.href = decodeURIComponent(returnUrl);
+        } else {
+          window.location.href = 'index.html';
+        }
+      } else {
+        // Pokaż błąd
+        errorMessage.classList.add('show');
+        document.getElementById('passwordInput').value = '';
+        document.getElementById('passwordInput').focus();
+        
+        // Ukryj błąd po 3 sekundach
+        setTimeout(() => {
+          errorMessage.classList.remove('show');
+        }, 3000);
+      }
+    });
+    
+    // Sprawdź autoryzację przy ładowaniu
+    checkExistingAuth();
+  </script>
+</body>
+</html>
