@@ -3,7 +3,12 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Notatki</title>
+  <!-- Meta tagi prywatności - zapobiegają indeksowaniu -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
+  <title>Notatki - Moje Zasoby</title>
+  <meta name="description" content="Osobiste notatki i przemyślenia">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
 * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -18,6 +23,8 @@ body {
 header {
   text-align: center;
   padding: 4rem 1rem 2rem;
+  position: relative;
+  z-index: 10;
 }
 main {
   display: grid;
@@ -26,6 +33,8 @@ main {
   padding: 3rem 2rem;
   max-width: 1200px;
   margin: auto;
+  position: relative;
+  z-index: 10;
 }
 .card, .file-card {
   background: rgba(255, 255, 255, 0.6);

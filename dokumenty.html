@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Meta tagi prywatności - zapobiegają indeksowaniu -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
   <title>Dokumenty - Moje Zasoby</title>
   <meta name="description" content="Zarządzaj swoimi dokumentami - dodawaj, usuwaj i organizuj pliki">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -242,12 +246,16 @@
       font-weight: 600;
     }
     
-    .form-group input {
+    .form-group input, .form-group input[type="file"] {
       width: 100%;
       padding: 0.75rem;
       border: 2px solid #e0e0e0;
       border-radius: 0.5rem;
       font-size: 1rem;
+    }
+    
+    .form-group input[type="file"] {
+      padding: 0.5rem;
     }
     
     .form-group input:focus {
@@ -326,8 +334,28 @@
           <input type="text" id="fileName" required placeholder="np. Raport roczny 2024">
         </div>
         <div class="form-group">
+          <label>Wybierz sposób dodania:</label>
+          <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
+            <label style="flex: 1; cursor: pointer;">
+              <input type="radio" name="fileType" value="link" checked style="margin-right: 0.5rem;">
+              Link do pliku
+            </label>
+            <label style="flex: 1; cursor: pointer;">
+              <input type="radio" name="fileType" value="upload" style="margin-right: 0.5rem;">
+              Plik z dysku
+            </label>
+          </div>
+        </div>
+        <div class="form-group" id="urlGroup">
           <label for="fileUrl">Link do dokumentu</label>
-          <input type="url" id="fileUrl" required placeholder="https://example.com/dokument.pdf">
+          <input type="url" id="fileUrl" placeholder="https://example.com/dokument.pdf">
+        </div>
+        <div class="form-group" id="uploadGroup" style="display: none;">
+          <label for="fileUpload">Wybierz plik</label>
+          <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.zip,.rar">
+          <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">
+            Uwaga: Pliki są przechowywane lokalnie w przeglądarce (max ~5MB na plik)
+          </small>
         </div>
         <button type="submit" class="btn btn-primary" style="width: 100%;">Dodaj dokument</button>
       </form>
@@ -346,7 +374,7 @@
       canvas.width = width;
       canvas.height = height;
       
-      const particleCount = Math.min(40, Math.floor((width * height) / 20000));
+      const particleCount = 60;
       
       particles = Array.from({length: particleCount}, () => ({
         x: Math.random() * width,
@@ -423,7 +451,15 @@
           
           fileCard.addEventListener('click', (e) => {
             if (!e.target.classList.contains('delete-btn')) {
-              window.open(file.url, '_blank');
+              if (file.type === 'link') {
+                window.open(file.url, '_blank');
+              } else {
+                // Dla plików lokalnych - tworzenie tymczasowego linku do pobrania
+                const link = document.createElement('a');
+                link.href = file.data;
+                link.download = file.fileName || file.name;
+                link.click();
+              }
             }
           });
           
@@ -435,6 +471,29 @@
       localStorage.setItem('fileCount_dokumenty', files.length);
     }
     
+    // Przełączanie między linkiem a uploadem
+    const radioButtons = document.querySelectorAll('input[name="fileType"]');
+    const urlGroup = document.getElementById('urlGroup');
+    const uploadGroup = document.getElementById('uploadGroup');
+    const fileUrlInput = document.getElementById('fileUrl');
+    const fileUploadInput = document.getElementById('fileUpload');
+    
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'link') {
+          urlGroup.style.display = 'block';
+          uploadGroup.style.display = 'none';
+          fileUrlInput.required = true;
+          fileUploadInput.required = false;
+        } else {
+          urlGroup.style.display = 'none';
+          uploadGroup.style.display = 'block';
+          fileUrlInput.required = false;
+          fileUploadInput.required = true;
+        }
+      });
+    });
+    
     // Dodawanie pliku
     addFileBtn.addEventListener('click', () => {
       addModal.style.display = 'block';
@@ -443,23 +502,62 @@
     closeModal.addEventListener('click', () => {
       addModal.style.display = 'none';
       addFileForm.reset();
+      urlGroup.style.display = 'block';
+      uploadGroup.style.display = 'none';
     });
     
     window.addEventListener('click', (e) => {
       if (e.target === addModal) {
         addModal.style.display = 'none';
         addFileForm.reset();
+        urlGroup.style.display = 'block';
+        uploadGroup.style.display = 'none';
       }
     });
     
-    addFileForm.addEventListener('submit', (e) => {
+    addFileForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       
-      const newFile = {
-        name: document.getElementById('fileName').value,
-        url: document.getElementById('fileUrl').value,
-        dateAdded: new Date().toISOString()
-      };
+      const fileName = document.getElementById('fileName').value;
+      const fileType = document.querySelector('input[name="fileType"]:checked').value;
+      
+      let newFile;
+      
+      if (fileType === 'link') {
+        newFile = {
+          name: fileName,
+          url: document.getElementById('fileUrl').value,
+          type: 'link',
+          dateAdded: new Date().toISOString()
+        };
+      } else {
+        const file = fileUploadInput.files[0];
+        if (!file) return;
+        
+        // Konwersja pliku do Base64
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          newFile = {
+            name: fileName,
+            data: e.target.result,
+            type: 'upload',
+            fileType: file.type,
+            fileName: file.name,
+            dateAdded: new Date().toISOString()
+          };
+          
+          documents.push(newFile);
+          localStorage.setItem('documents', JSON.stringify(documents));
+          
+          renderFiles();
+          addModal.style.display = 'none';
+          addFileForm.reset();
+          urlGroup.style.display = 'block';
+          uploadGroup.style.display = 'none';
+        };
+        reader.readAsDataURL(file);
+        return;
+      }
       
       documents.push(newFile);
       localStorage.setItem('documents', JSON.stringify(documents));

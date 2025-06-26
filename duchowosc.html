@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Meta tagi prywatności - zapobiegają indeksowaniu -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
   <title>Duchowość - Moje Zasoby</title>
   <meta name="description" content="Zasoby duchowe - medytacje, refleksje, inspiracje">
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -238,7 +242,7 @@
       canvas.width = width;
       canvas.height = height;
       
-      const particleCount = Math.min(40, Math.floor((width * height) / 20000));
+      const particleCount = 60;
       
       particles = Array.from({length: particleCount}, () => ({
         x: Math.random() * width,

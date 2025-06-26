@@ -3,6 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- Meta tagi prywatności - zapobiegają indeksowaniu -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow">
+  <meta name="bingbot" content="noindex, nofollow">
   <title>Moje Zasoby - System Zarządzania Dokumentami</title>
   <meta name="description" content="Osobisty system zarządzania dokumentami, notatkami i plikami. Organizuj swoje zasoby w kategoriach: duchowość, praca, archiwum, projekty, notatki, dokumenty.">
   <meta name="keywords" content="zarządzanie dokumentami, organizacja plików, notatki, archiwum">
@@ -212,8 +216,8 @@
       canvas.width = width;
       canvas.height = height;
       
-      // Zmniejszona liczba cząsteczek dla lepszej wydajności
-      const particleCount = Math.min(40, Math.floor((width * height) / 20000));
+      // Powrót do oryginalnej liczby cząsteczek
+      const particleCount = 60;
       
       particles = Array.from({length: particleCount}, () => ({
         x: Math.random() * width,
