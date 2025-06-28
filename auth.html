@@ -47,13 +47,17 @@
       margin-bottom: 1rem;
     }
     
+    .form-group {
+      margin-bottom: 1rem;
+    }
+    
     .password-input {
       width: 100%;
       padding: 1rem;
       font-size: 1.1rem;
       border: 2px solid #e0e0e0;
       border-radius: 0.5rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
       transition: border-color 0.3s ease;
     }
     
@@ -137,16 +141,28 @@
     <h1>Autoryzacja</h1>
     
     <form id="authForm">
-      <input 
-        type="password" 
-        id="passwordInput" 
-        class="password-input" 
-        placeholder="Wprowadź hasło"
-        autocomplete="current-password"
-        autofocus
-      >
+      <div class="form-group">
+        <input 
+          type="text" 
+          id="loginInput" 
+          class="password-input" 
+          placeholder="Login"
+          autocomplete="username"
+          required
+        >
+      </div>
+      <div class="form-group">
+        <input 
+          type="password" 
+          id="passwordInput" 
+          class="password-input" 
+          placeholder="Hasło"
+          autocomplete="current-password"
+          required
+        >
+      </div>
       <button type="submit" class="submit-btn">Zaloguj się</button>
-      <p class="error-message" id="errorMessage">Nieprawidłowe hasło. Spróbuj ponownie.</p>
+      <p class="error-message" id="errorMessage">Nieprawidłowy login lub hasło.</p>
     </form>
     
     <div class="info-text">
@@ -205,7 +221,8 @@
     animate();
     
     // System autoryzacji
-    const CORRECT_PASSWORD = 'ivwewmya'; // ZMIEŃ NA SWOJE HASŁO!
+    const CORRECT_LOGIN = 'ciubek'; // ZMIEŃ NA SWÓJ LOGIN!
+    const CORRECT_PASSWORD = 'ivwewmya387'; // ZMIEŃ NA SWOJE HASŁO!
     const AUTH_STORAGE_KEY = 'siteAuthenticated';
     const AI_TOKEN = 'ai_access_2025'; // Token dla dostępu AI
     
@@ -247,10 +264,11 @@
     document.getElementById('authForm').addEventListener('submit', (e) => {
       e.preventDefault();
       
+      const login = document.getElementById('loginInput').value;
       const password = document.getElementById('passwordInput').value;
       const errorMessage = document.getElementById('errorMessage');
       
-      if (password === CORRECT_PASSWORD) {
+      if (login === CORRECT_LOGIN && password === CORRECT_PASSWORD) {
         // Zapisz autoryzację
         localStorage.setItem(AUTH_STORAGE_KEY, Date.now().toString());
         
@@ -263,8 +281,9 @@
       } else {
         // Pokaż błąd
         errorMessage.classList.add('show');
+        document.getElementById('loginInput').value = '';
         document.getElementById('passwordInput').value = '';
-        document.getElementById('passwordInput').focus();
+        document.getElementById('loginInput').focus();
         
         // Ukryj błąd po 3 sekundach
         setTimeout(() => {

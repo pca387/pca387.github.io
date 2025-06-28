@@ -1,4 +1,187 @@
-<!DOCTYPE html>
+  <script>
+    // Animacja sieci
+    const canvas = document.getElementById('network');
+    const ctx = canvas.getContext('2d');
+    let width, height, particles, animationId;
+    
+    function init() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      
+      const particleCount = 60;
+      
+      particles = Array.from({length: particleCount}, () => ({
+        x: Math.random() * width,
+        y: Math.random() * height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5
+      }));
+    }
+    
+    function animate() {
+      ctx.clearRect(0, 0, width, height);
+      
+      for (let p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        if (p.x < 0 || p.x > width) p.vx *= -1;
+        if (p.y < 0 || p.y > height) p.vy *= -1;
+      }
+      
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          
+          if (dist < 120) {
+            ctx.strokeStyle = 'rgba(3, 77, 93, ' + (1 - dist / 120) + ')';
+            ctx.lineWidth = 1;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+      }
+      
+      animationId = requestAnimationFrame(animate);
+    }
+    
+    // System zarządzania plikami
+    let documents = JSON.parse(localStorage.getItem('documents') || '[]');
+    
+    const filesGrid = document.getElementById('filesGrid');
+    const emptyState = document.getElementById('emptyState');
+    const addModal = document.getElementById('addModal');
+    const addFileBtn = document.getElementById('addFileBtn');
+    const closeModal = document.querySelector('.close');
+    const addFileForm = document.getElementById('addFileForm');
+    const searchInput = document.getElementById('searchInput');
+    const fileUploadInput = document.getElementById('fileUpload');
+    
+    // Renderowanie plików
+    function renderFiles(files = documents) {
+      filesGrid.innerHTML = '';
+      
+      if (files.length === 0) {
+        emptyState.style.display = 'block';
+      } else {
+        emptyState.style.display = 'none';
+        
+        files.forEach((file, index) => {
+          const fileCard = document.createElement('div');
+          fileCard.className = 'file-card';
+          fileCard.innerHTML = `
+            <button class="delete-btn" data-index="${index}">×</button>
+            <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
+              <polyline points="13 2 13 9 20 9"></polyline>
+            </svg>
+            <div class="file-name">${file.name}</div>
+            <div class="file-info">Dodano: ${new Date(file.dateAdded).toLocaleDateString('pl-PL')}</div>
+          `;
+          
+          fileCard.addEventListener('click', (e) => {
+            if (!e.target.classList.contains('delete-btn')) {
+              if (file.type === 'link') {
+                window.open(file.url, '_blank');
+              } else {
+                // Dla plików lokalnych
+                if (file.fileType === 'application/pdf') {
+                  // Otwórz PDF w nowej karcie
+                  const newWindow = window.open();
+                  newWindow.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                      <title>${file.name}</title>
+                      <style>
+                        body { margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
+                        .toolbar { 
+                          background: #333; 
+                          color: white; 
+                          padding: 10px 20px; 
+                          display: flex; 
+                          justify-content: space-between; 
+                          align-items: center;
+                        }
+                        .back-btn {
+                          background: #03a9f4;
+                          color: white;
+                          border: none;
+                          padding: 8px 20px;
+                          border-radius: 5px;
+                          cursor: pointer;
+                          font-size: 16px;
+                          text-decoration: none;
+                          display: inline-block;
+                        }
+                        .back-btn:hover { background: #0288d1; }
+                        iframe { flex: 1; width: 100%; border: none; }
+                      </style>
+                    </head>
+                    <body>
+                      <div class="toolbar">
+                        <h3>${file.name}</h3>
+                        <a href="${window.location.href}" class="back-btn">← Powrót</a>
+                      </div>
+                      <iframe src="${file.data}"></iframe>
+                    </body>
+                    </html>
+                  `);
+                } else {
+                  // Inne pliki - pobierz
+                  const link = document.createElement('a');
+                  link.href = file.data;
+                  link.download = file.fileName || file.name;
+                  link.click();
+                }
+              }
+            }
+          });
+          
+          filesGrid.appendChild(fileCard);
+        });
+      }
+      
+      // Aktualizacja licznika na stronie głównej
+      localStorage.setItem('fileCount_dokumenty', files.length);
+    }
+    
+    // Pokazuj rozmiar wybranego pliku
+    fileUploadInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        const sizeMB = (file.size / 1024 / 1024).toFixed(2);
+        const small = document.querySelector('#uploadGroup small');
+        if (sizeMB > 4) {
+          small.innerHTML = `<span style="color: #f44336;">⚠️ Plik: ${sizeMB}MB - ZA DUŻY! Max 4MB. Użyj Google Drive.</span>`;
+        } else {
+          small.innerHTML = `✓ Plik: ${sizeMB}MB - OK`;
+        }
+      }
+    });
+    
+    // Przełączanie między linkiem a uploadem
+    const radioButtons = document.querySelectorAll('input[name="fileType"]');
+    const urlGroup = document.getElementById('urlGroup');
+    const uploadGroup = document.getElementById('uploadGroup');
+    const fileUrlInput = document.getElementById('fileUrl');
+    
+    radioButtons.forEach(radio => {
+      radio.addEventListener('change', (e) => {
+        if (e.target.value === 'link') {
+          urlGroup.style.display = 'block';
+          uploadGroup.style.display = 'none';
+          fileUrlInput.required = true;
+          fileUploadInput.required = false;
+        } else {
+          urlGroup.style.display = 'none';
+          uploadGroup.style.display = 'block';
+          fileUrlInput.required =<!DOCTYPE html>
 <html lang="pl">
 <head>
   <meta charset="UTF-8">
@@ -273,6 +456,26 @@
       pointer-events: none;
     }
     
+    .logout-btn {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      padding: 0.5rem 1rem;
+      background: #f44336;
+      color: white;
+      border: none;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 0.875rem;
+      z-index: 1000;
+      transition: all 0.3s ease;
+    }
+    
+    .logout-btn:hover {
+      background: #d32f2f;
+      transform: translateY(-2px);
+    }
+    
     @media (max-width: 768px) {
       .files-grid {
         grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -282,6 +485,8 @@
 </head>
 <body>
   <canvas id="network"></canvas>
+  
+  <button class="logout-btn" onclick="logout()">Wyloguj</button>
   
   <header>
     <h1>Dokumenty</h1>
@@ -385,7 +590,7 @@
       if (!authData) {
         // Brak autoryzacji - przekieruj do strony logowania
         const returnUrl = encodeURIComponent(window.location.href);
-        window.location.href = `${PASSWORD_PAGE}?return=${returnUrl}`;
+        window.location.replace(`${PASSWORD_PAGE}?return=${returnUrl}`);
         return;
       }
       
@@ -397,14 +602,25 @@
         if (Date.now() - authTime > dayInMs) {
           localStorage.removeItem(AUTH_KEY);
           const returnUrl = encodeURIComponent(window.location.href);
-          window.location.href = `${PASSWORD_PAGE}?return=${returnUrl}`;
+          window.location.replace(`${PASSWORD_PAGE}?return=${returnUrl}`);
           return;
         }
       }
     })();
     
-    // Animacja sieci - taka sama jak w index.html
-    const canvas = document.getElementById('network');
+    // Funkcja wylogowania
+    function logout() {
+      if (confirm('Czy na pewno chcesz się wylogować?')) {
+        localStorage.removeItem('siteAuthenticated');
+        sessionStorage.removeItem('siteAuthenticated');
+        window.location.href = 'auth.html';
+      }
+    }
+    
+    // Reszta kodu JavaScript - animacja i zarządzanie plikami
+    window.addEventListener('DOMContentLoaded', function() {
+      // Animacja sieci
+      const canvas = document.getElementById('network');
     const ctx = canvas.getContext('2d');
     let width, height, particles, animationId;
     
@@ -712,25 +928,26 @@
       renderFiles(filteredFiles);
     });
     
-    // Inicjalizacja
-    window.addEventListener('resize', () => {
-      cancelAnimationFrame(animationId);
+      // Inicjalizacja
+      window.addEventListener('resize', () => {
+        cancelAnimationFrame(animationId);
+        init();
+        animate();
+      });
+      
       init();
       animate();
-    });
-    
-    init();
-    animate();
-    renderFiles();
-    
-    // Optymalizacja wydajności
-    document.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animationId);
-      } else {
-        animate();
-      }
-    });
+      renderFiles();
+      
+      // Optymalizacja wydajności
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          cancelAnimationFrame(animationId);
+        } else {
+          animate();
+        }
+      });
+    }); // Koniec DOMContentLoaded
   </script>
 </body>
 </html>
