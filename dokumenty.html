@@ -3,44 +3,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <!-- Meta tagi prywatności - zapobiegają indeksowaniu -->
-  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
-  <meta name="googlebot" content="noindex, nofollow">
-  <meta name="bingbot" content="noindex, nofollow">
-  <title>Dokumenty - Moje Zasoby</title>
-  <meta name="description" content="Zarządzaj swoimi dokumentami - dodawaj, usuwaj i organizuj pliki">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <meta name="robots" content="noindex, nofollow">
+  <title>Dokumenty - Test</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     
-    :root {
-      --primary-color: #034d5d;
-      --secondary-color: #03a9f4;
-      --success-color: #4caf50;
-      --danger-color: #f44336;
-      --bg-gradient-start: #b3e5fc;
-      --bg-gradient-end: #e1f5fe;
-      --card-bg: rgba(255, 255, 255, 0.6);
-      --card-hover-bg: rgba(255, 255, 255, 0.8);
-      --shadow: 0 8px 20px rgba(0,0,0,0.1);
-    }
-    
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, var(--bg-gradient-start), var(--bg-gradient-end));
-      overflow-x: hidden;
+      background: linear-gradient(135deg, #b3e5fc, #e1f5fe);
       min-height: 100vh;
-      position: relative;
-      color: var(--primary-color);
+      color: #034d5d;
     }
     
     header {
       text-align: center;
       padding: 3rem 1rem 2rem;
-      position: relative;
-      z-index: 10;
     }
     
     .toolbar {
@@ -59,22 +37,13 @@
       border-radius: 0.5rem;
       font-weight: 600;
       cursor: pointer;
-      transition: all 0.3s ease;
       font-size: 1rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    
-    .btn-primary {
-      background: var(--secondary-color);
+      background: #03a9f4;
       color: white;
     }
     
-    .btn-primary:hover {
+    .btn:hover {
       background: #0288d1;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(3, 169, 244, 0.3);
     }
     
     .search-box {
@@ -83,24 +52,14 @@
       padding: 0.75rem 1.5rem;
       border: none;
       border-radius: 2rem;
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.8);
       font-size: 1rem;
-      color: var(--primary-color);
-      box-shadow: var(--shadow);
-    }
-    
-    .search-box:focus {
-      outline: none;
-      background: var(--card-hover-bg);
     }
     
     main {
       padding: 2rem;
       max-width: 1200px;
       margin: auto;
-      position: relative;
-      z-index: 10;
     }
     
     .files-grid {
@@ -111,40 +70,17 @@
     }
     
     .file-card {
-      background: var(--card-bg);
-      backdrop-filter: blur(10px);
+      background: rgba(255, 255, 255, 0.8);
       border-radius: 1rem;
       padding: 1.5rem;
       text-align: center;
-      box-shadow: var(--shadow);
-      transition: all 0.3s ease;
-      position: relative;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
       cursor: pointer;
+      position: relative;
     }
     
     .file-card:hover {
-      background: var(--card-hover-bg);
       transform: translateY(-3px);
-      box-shadow: 0 12px 24px rgba(0,0,0,0.12);
-    }
-    
-    .file-icon {
-      width: 48px;
-      height: 48px;
-      margin: 0 auto 1rem;
-      opacity: 0.8;
-    }
-    
-    .file-name {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 0.5rem;
-      word-break: break-word;
-    }
-    
-    .file-info {
-      font-size: 0.75rem;
-      opacity: 0.7;
     }
     
     .delete-btn {
@@ -153,33 +89,16 @@
       right: 0.5rem;
       width: 24px;
       height: 24px;
-      background: var(--danger-color);
+      background: #f44336;
       color: white;
       border: none;
       border-radius: 50%;
       cursor: pointer;
       opacity: 0;
-      transition: opacity 0.3s ease;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
     
     .file-card:hover .delete-btn {
       opacity: 1;
-    }
-    
-    .delete-btn:hover {
-      background: #d32f2f;
-    }
-    
-    .back-link {
-      background: var(--secondary-color);
-      color: white;
-    }
-    
-    .back-link:hover {
-      background: #0288d1;
     }
     
     .empty-state {
@@ -188,14 +107,6 @@
       opacity: 0.6;
     }
     
-    .empty-state svg {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 1rem;
-      opacity: 0.4;
-    }
-    
-    /* Modal dla dodawania plików */
     .modal {
       display: none;
       position: fixed;
@@ -205,7 +116,6 @@
       width: 100%;
       height: 100%;
       background: rgba(0, 0, 0, 0.5);
-      backdrop-filter: blur(5px);
     }
     
     .modal-content {
@@ -215,541 +125,205 @@
       border-radius: 1rem;
       max-width: 500px;
       width: 90%;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-    }
-    
-    .modal-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.5rem;
     }
     
     .close {
+      float: right;
       font-size: 28px;
-      font-weight: bold;
       cursor: pointer;
-      opacity: 0.5;
-    }
-    
-    .close:hover {
-      opacity: 1;
     }
     
     .form-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1rem;
     }
     
     .form-group label {
       display: block;
       margin-bottom: 0.5rem;
-      font-weight: 600;
     }
     
-    .form-group input, .form-group input[type="file"] {
+    .form-group input {
       width: 100%;
-      padding: 0.75rem;
-      border: 2px solid #e0e0e0;
-      border-radius: 0.5rem;
-      font-size: 1rem;
-    }
-    
-    .form-group input[type="file"] {
       padding: 0.5rem;
-    }
-    
-    .form-group input:focus {
-      outline: none;
-      border-color: var(--secondary-color);
-    }
-    
-    .logout-btn {
-      position: fixed;
-      top: 1rem;
-      right: 1rem;
-      padding: 0.5rem 1rem;
-      background: #f44336;
-      color: white;
-      border: none;
-      border-radius: 0.5rem;
-      cursor: pointer;
-      font-size: 0.875rem;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    
-    .logout-btn:hover {
-      background: #d32f2f;
-      transform: translateY(-2px);
-    }
-    
-    canvas {
-      position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
-    }
-    
-    @media (max-width: 768px) {
-      .files-grid {
-        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-      }
+      border: 1px solid #ddd;
+      border-radius: 0.25rem;
     }
   </style>
 </head>
 <body>
-  <canvas id="network"></canvas>
-  
-  <button class="logout-btn" onclick="logout()">Wyloguj</button>
-  
   <header>
-    <h1>Dokumenty</h1>
-    <p>Zarządzaj swoimi dokumentami</p>
+    <h1>Dokumenty - Test</h1>
+    <p>Wersja bez autoryzacji</p>
   </header>
   
   <div class="toolbar">
     <input type="text" class="search-box" id="searchInput" placeholder="Szukaj dokumentów...">
-    <button class="btn btn-primary" id="addFileBtn">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <line x1="12" y1="5" x2="12" y2="19"></line>
-        <line x1="5" y1="12" x2="19" y2="12"></line>
-      </svg>
-      Dodaj dokument
-    </button>
+    <button class="btn" onclick="openModal()">+ Dodaj dokument</button>
   </div>
   
   <main>
-    <div class="files-grid" id="filesGrid">
-      <!-- Pliki będą tutaj dynamicznie dodawane -->
-    </div>
+    <div class="files-grid" id="filesGrid"></div>
     
-    <div class="empty-state" id="emptyState" style="display: none;">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-        <polyline points="13 2 13 9 20 9"></polyline>
-      </svg>
+    <div class="empty-state" id="emptyState">
       <h3>Brak dokumentów</h3>
       <p>Dodaj swój pierwszy dokument</p>
     </div>
     
-    <a href="index.html" class="file-card back-link" style="display: inline-block;">
-      <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-        <polyline points="15 18 9 12 15 6"></polyline>
-      </svg>
-      <div class="file-name">Powrót</div>
-    </a>
+    <a href="index.html" style="display: inline-block; margin-top: 2rem; padding: 1rem 2rem; background: #03a9f4; color: white; text-decoration: none; border-radius: 0.5rem;">Powrót</a>
   </main>
   
-  <!-- Modal dodawania pliku -->
   <div id="addModal" class="modal">
     <div class="modal-content">
-      <div class="modal-header">
-        <h2>Dodaj nowy dokument</h2>
-        <span class="close">&times;</span>
-      </div>
-      <form id="addFileForm">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2>Dodaj dokument</h2>
+      <form id="addForm" onsubmit="addDocument(event)">
         <div class="form-group">
-          <label for="fileName">Nazwa dokumentu</label>
-          <input type="text" id="fileName" required placeholder="np. Raport roczny 2024">
+          <label>Nazwa dokumentu</label>
+          <input type="text" id="docName" required>
         </div>
         <div class="form-group">
-          <label>Wybierz sposób dodania:</label>
-          <div style="display: flex; gap: 1rem; margin-top: 0.5rem;">
-            <label style="flex: 1; cursor: pointer;">
-              <input type="radio" name="fileType" value="link" checked style="margin-right: 0.5rem;">
-              Link do pliku
-            </label>
-            <label style="flex: 1; cursor: pointer;">
-              <input type="radio" name="fileType" value="upload" style="margin-right: 0.5rem;">
-              Plik z dysku
-            </label>
-          </div>
+          <label>
+            <input type="radio" name="type" value="link" checked onchange="toggleInputs()"> Link
+            <input type="radio" name="type" value="file" onchange="toggleInputs()"> Plik
+          </label>
         </div>
-        <div class="form-group" id="urlGroup">
-          <label for="fileUrl">Link do dokumentu</label>
-          <input type="url" id="fileUrl" placeholder="https://example.com/dokument.pdf">
+        <div class="form-group" id="linkGroup">
+          <label>URL dokumentu</label>
+          <input type="url" id="docUrl">
         </div>
-        <div class="form-group" id="uploadGroup" style="display: none;">
-          <label for="fileUpload">Wybierz plik</label>
-          <input type="file" id="fileUpload" accept=".pdf,.doc,.docx,.txt,.xls,.xlsx,.ppt,.pptx,.zip,.rar">
-          <small style="display: block; margin-top: 0.5rem; opacity: 0.7;">
-            Max ~4MB. Większe pliki wgraj na Google Drive i użyj linku.
-          </small>
+        <div class="form-group" id="fileGroup" style="display: none;">
+          <label>Wybierz plik</label>
+          <input type="file" id="docFile" accept=".pdf,.doc,.docx,.txt">
         </div>
-        <button type="submit" class="btn btn-primary" style="width: 100%;">Dodaj dokument</button>
+        <button type="submit" class="btn" style="width: 100%;">Dodaj</button>
       </form>
     </div>
   </div>
-  
+
   <script>
-    // System autoryzacji
-    (function() {
-      const AUTH_KEY = 'siteAuthenticated';
-      const AI_TOKEN = 'ai_access_2024';
-      const PASSWORD_PAGE = 'auth.html';
-      
-      const urlParams = new URLSearchParams(window.location.search);
-      const token = urlParams.get('token');
-      
-      if (token === AI_TOKEN) {
-        sessionStorage.setItem(AUTH_KEY, Date.now().toString());
-        return;
-      }
-      
-      const authData = localStorage.getItem(AUTH_KEY) || sessionStorage.getItem(AUTH_KEY);
-      
-      if (!authData) {
-        const returnUrl = encodeURIComponent(window.location.href);
-        window.location.replace(`${PASSWORD_PAGE}?return=${returnUrl}`);
-        return;
-      }
-      
-      if (localStorage.getItem(AUTH_KEY)) {
-        const authTime = parseInt(localStorage.getItem(AUTH_KEY));
-        const dayInMs = 24 * 60 * 60 * 1000;
-        
-        if (Date.now() - authTime > dayInMs) {
-          localStorage.removeItem(AUTH_KEY);
-          const returnUrl = encodeURIComponent(window.location.href);
-          window.location.replace(`${PASSWORD_PAGE}?return=${returnUrl}`);
-          return;
-        }
-      }
-    })();
+    console.log('Start skryptu');
     
-    // Funkcja wylogowania
-    function logout() {
-      if (confirm('Czy na pewno chcesz się wylogować?')) {
-        localStorage.removeItem('siteAuthenticated');
-        sessionStorage.removeItem('siteAuthenticated');
-        window.location.href = 'auth.html';
+    let documents = [];
+    try {
+      documents = JSON.parse(localStorage.getItem('documents') || '[]');
+    } catch (e) {
+      console.error('Błąd odczytu localStorage:', e);
+    }
+    
+    function renderFiles() {
+      console.log('Renderowanie plików:', documents.length);
+      const grid = document.getElementById('filesGrid');
+      const empty = document.getElementById('emptyState');
+      
+      grid.innerHTML = '';
+      
+      if (documents.length === 0) {
+        empty.style.display = 'block';
+      } else {
+        empty.style.display = 'none';
+        
+        documents.forEach((doc, index) => {
+          const card = document.createElement('div');
+          card.className = 'file-card';
+          card.innerHTML = `
+            <button class="delete-btn" onclick="deleteDoc(${index})">×</button>
+            <h3>${doc.name}</h3>
+            <p>Dodano: ${new Date(doc.dateAdded).toLocaleDateString()}</p>
+          `;
+          card.onclick = function(e) {
+            if (!e.target.classList.contains('delete-btn')) {
+              if (doc.type === 'link') {
+                window.open(doc.url, '_blank');
+              } else {
+                alert('Pobieranie pliku: ' + doc.name);
+              }
+            }
+          };
+          grid.appendChild(card);
+        });
       }
     }
     
-    // Cała reszta kodu aplikacji
-    window.addEventListener('DOMContentLoaded', function() {
-      // Animacja sieci
-      const canvas = document.getElementById('network');
-      const ctx = canvas.getContext('2d');
-      let width, height, particles, animationId;
+    function openModal() {
+      console.log('Otwieranie modalu');
+      document.getElementById('addModal').style.display = 'block';
+    }
+    
+    function closeModal() {
+      console.log('Zamykanie modalu');
+      document.getElementById('addModal').style.display = 'none';
+      document.getElementById('addForm').reset();
+    }
+    
+    function toggleInputs() {
+      const type = document.querySelector('input[name="type"]:checked').value;
+      document.getElementById('linkGroup').style.display = type === 'link' ? 'block' : 'none';
+      document.getElementById('fileGroup').style.display = type === 'file' ? 'block' : 'none';
+    }
+    
+    function addDocument(e) {
+      e.preventDefault();
+      console.log('Dodawanie dokumentu');
       
-      function init() {
-        width = window.innerWidth;
-        height = window.innerHeight;
-        canvas.width = width;
-        canvas.height = height;
-        
-        const particleCount = 60;
-        
-        particles = Array.from({length: particleCount}, () => ({
-          x: Math.random() * width,
-          y: Math.random() * height,
-          vx: (Math.random() - 0.5) * 0.5,
-          vy: (Math.random() - 0.5) * 0.5
-        }));
-      }
+      const name = document.getElementById('docName').value;
+      const type = document.querySelector('input[name="type"]:checked').value;
       
-      function animate() {
-        ctx.clearRect(0, 0, width, height);
-        
-        for (let p of particles) {
-          p.x += p.vx;
-          p.y += p.vy;
-          if (p.x < 0 || p.x > width) p.vx *= -1;
-          if (p.y < 0 || p.y > height) p.vy *= -1;
+      if (type === 'link') {
+        const url = document.getElementById('docUrl').value;
+        if (!url) {
+          alert('Podaj URL!');
+          return;
         }
         
-        for (let i = 0; i < particles.length; i++) {
-          for (let j = i + 1; j < particles.length; j++) {
-            const dx = particles[i].x - particles[j].x;
-            const dy = particles[i].y - particles[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            
-            if (dist < 120) {
-              ctx.strokeStyle = 'rgba(3, 77, 93, ' + (1 - dist / 120) + ')';
-              ctx.lineWidth = 1;
-              ctx.beginPath();
-              ctx.moveTo(particles[i].x, particles[i].y);
-              ctx.lineTo(particles[j].x, particles[j].y);
-              ctx.stroke();
-            }
-          }
-        }
-        
-        animationId = requestAnimationFrame(animate);
-      }
-      
-      // System zarządzania plikami
-      let documents = JSON.parse(localStorage.getItem('documents') || '[]');
-      
-      const filesGrid = document.getElementById('filesGrid');
-      const emptyState = document.getElementById('emptyState');
-      const addModal = document.getElementById('addModal');
-      const addFileBtn = document.getElementById('addFileBtn');
-      const closeModal = document.querySelector('.close');
-      const addFileForm = document.getElementById('addFileForm');
-      const searchInput = document.getElementById('searchInput');
-      const fileUploadInput = document.getElementById('fileUpload');
-      const radioButtons = document.querySelectorAll('input[name="fileType"]');
-      const urlGroup = document.getElementById('urlGroup');
-      const uploadGroup = document.getElementById('uploadGroup');
-      const fileUrlInput = document.getElementById('fileUrl');
-      
-      // Renderowanie plików
-      function renderFiles(files = documents) {
-        filesGrid.innerHTML = '';
-        
-        if (files.length === 0) {
-          emptyState.style.display = 'block';
-        } else {
-          emptyState.style.display = 'none';
-          
-          files.forEach((file, index) => {
-            const fileCard = document.createElement('div');
-            fileCard.className = 'file-card';
-            fileCard.innerHTML = `
-              <button class="delete-btn" data-index="${index}">×</button>
-              <svg class="file-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"></path>
-                <polyline points="13 2 13 9 20 9"></polyline>
-              </svg>
-              <div class="file-name">${file.name}</div>
-              <div class="file-info">Dodano: ${new Date(file.dateAdded).toLocaleDateString('pl-PL')}</div>
-            `;
-            
-            fileCard.addEventListener('click', (e) => {
-              if (!e.target.classList.contains('delete-btn')) {
-                if (file.type === 'link') {
-                  window.open(file.url, '_blank');
-                } else {
-                  if (file.fileType === 'application/pdf') {
-                    const newWindow = window.open();
-                    newWindow.document.write(`
-                      <!DOCTYPE html>
-                      <html>
-                      <head>
-                        <title>${file.name}</title>
-                        <style>
-                          body { margin: 0; padding: 0; height: 100vh; display: flex; flex-direction: column; }
-                          .toolbar { 
-                            background: #333; 
-                            color: white; 
-                            padding: 10px 20px; 
-                            display: flex; 
-                            justify-content: space-between; 
-                            align-items: center;
-                          }
-                          .back-btn {
-                            background: #03a9f4;
-                            color: white;
-                            border: none;
-                            padding: 8px 20px;
-                            border-radius: 5px;
-                            cursor: pointer;
-                            font-size: 16px;
-                            text-decoration: none;
-                            display: inline-block;
-                          }
-                          .back-btn:hover { background: #0288d1; }
-                          iframe { flex: 1; width: 100%; border: none; }
-                        </style>
-                      </head>
-                      <body>
-                        <div class="toolbar">
-                          <h3>${file.name}</h3>
-                          <a href="${window.location.href}" class="back-btn">← Powrót</a>
-                        </div>
-                        <iframe src="${file.data}"></iframe>
-                      </body>
-                      </html>
-                    `);
-                  } else {
-                    const link = document.createElement('a');
-                    link.href = file.data;
-                    link.download = file.fileName || file.name;
-                    link.click();
-                  }
-                }
-              }
-            });
-            
-            filesGrid.appendChild(fileCard);
-          });
-        }
-        
-        localStorage.setItem('fileCount_dokumenty', files.length);
-      }
-      
-      // Obsługa formularza
-      addFileBtn.addEventListener('click', () => {
-        addModal.style.display = 'block';
-      });
-      
-      closeModal.addEventListener('click', () => {
-        addModal.style.display = 'none';
-        addFileForm.reset();
-        urlGroup.style.display = 'block';
-        uploadGroup.style.display = 'none';
-      });
-      
-      window.addEventListener('click', (e) => {
-        if (e.target === addModal) {
-          addModal.style.display = 'none';
-          addFileForm.reset();
-          urlGroup.style.display = 'block';
-          uploadGroup.style.display = 'none';
-        }
-      });
-      
-      // Przełączanie między typami plików
-      radioButtons.forEach(radio => {
-        radio.addEventListener('change', (e) => {
-          if (e.target.value === 'link') {
-            urlGroup.style.display = 'block';
-            uploadGroup.style.display = 'none';
-            fileUrlInput.required = true;
-            fileUploadInput.required = false;
-          } else {
-            urlGroup.style.display = 'none';
-            uploadGroup.style.display = 'block';
-            fileUrlInput.required = false;
-            fileUploadInput.required = true;
-          }
+        documents.push({
+          name: name,
+          url: url,
+          type: 'link',
+          dateAdded: new Date().toISOString()
         });
-      });
-      
-      // Informacja o rozmiarze pliku
-      fileUploadInput.addEventListener('change', (e) => {
-        const file = e.target.files[0];
-        if (file) {
-          const sizeMB = (file.size / 1024 / 1024).toFixed(2);
-          const small = document.querySelector('#uploadGroup small');
-          if (sizeMB > 4) {
-            small.innerHTML = `<span style="color: #f44336;">⚠️ Plik: ${sizeMB}MB - ZA DUŻY! Max 4MB. Użyj Google Drive.</span>`;
-          } else {
-            small.innerHTML = `✓ Plik: ${sizeMB}MB - OK`;
-          }
-        }
-      });
-      
-      // Dodawanie dokumentu
-      addFileForm.addEventListener('submit', (e) => {
-        e.preventDefault();
         
-        const fileName = document.getElementById('fileName').value;
-        const fileType = document.querySelector('input[name="fileType"]:checked').value;
-        
-        if (fileType === 'link') {
-          const newFile = {
-            name: fileName,
-            url: document.getElementById('fileUrl').value,
-            type: 'link',
-            dateAdded: new Date().toISOString()
-          };
-          
-          documents.push(newFile);
-          localStorage.setItem('documents', JSON.stringify(documents));
-          
-          renderFiles();
-          addModal.style.display = 'none';
-          addFileForm.reset();
-          urlGroup.style.display = 'block';
-          uploadGroup.style.display = 'none';
-          
-        } else {
-          const file = fileUploadInput.files[0];
-          
-          if (!file) {
-            alert('Wybierz plik!');
-            return;
-          }
-          
-          if (file.size > 4 * 1024 * 1024) {
-            alert(`Plik za duży: ${(file.size / 1024 / 1024).toFixed(1)}MB. Max 4MB.`);
-            return;
-          }
-          
-          const reader = new FileReader();
-          
-          reader.onload = function(e) {
-            const newFile = {
-              name: fileName,
-              data: e.target.result,
-              type: 'upload',
-              fileType: file.type,
-              fileName: file.name,
-              dateAdded: new Date().toISOString()
-            };
-            
-            documents.push(newFile);
-            
-            try {
-              localStorage.setItem('documents', JSON.stringify(documents));
-              console.log('Dokument zapisany:', newFile.name);
-            } catch (err) {
-              alert('Błąd zapisu. Możliwe że brakuje miejsca w localStorage.');
-              console.error(err);
-              return;
-            }
-            
-            renderFiles();
-            addModal.style.display = 'none';
-            addFileForm.reset();
-            urlGroup.style.display = 'block';
-            uploadGroup.style.display = 'none';
-          };
-          
-          reader.onerror = function() {
-            alert('Błąd podczas wczytywania pliku.');
-          };
-          
-          reader.readAsDataURL(file);
-        }
-      });
+        localStorage.setItem('documents', JSON.stringify(documents));
+        renderFiles();
+        closeModal();
+      } else {
+        alert('Upload plików w tej wersji testowej jest wyłączony');
+      }
+    }
+    
+    function deleteDoc(index) {
+      if (confirm('Usunąć dokument?')) {
+        documents.splice(index, 1);
+        localStorage.setItem('documents', JSON.stringify(documents));
+        renderFiles();
+      }
+    }
+    
+    // Wyszukiwarka
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      const term = e.target.value.toLowerCase();
+      const filtered = documents.filter(doc => 
+        doc.name.toLowerCase().includes(term)
+      );
       
-      // Usuwanie pliku
-      filesGrid.addEventListener('click', (e) => {
-        if (e.target.classList.contains('delete-btn')) {
-          const index = parseInt(e.target.dataset.index);
-          if (confirm('Czy na pewno chcesz usunąć ten dokument?')) {
-            documents.splice(index, 1);
-            localStorage.setItem('documents', JSON.stringify(documents));
-            renderFiles();
-          }
-        }
-      });
-      
-      // Wyszukiwarka
-      searchInput.addEventListener('input', (e) => {
-        const searchTerm = e.target.value.toLowerCase();
-        const filteredFiles = documents.filter(file => 
-          file.name.toLowerCase().includes(searchTerm)
-        );
-        renderFiles(filteredFiles);
-      });
-      
-      // Inicjalizacja
-      window.addEventListener('resize', () => {
-        cancelAnimationFrame(animationId);
-        init();
-        animate();
-      });
-      
-      init();
-      animate();
-      renderFiles();
-      
-      document.addEventListener('visibilitychange', () => {
-        if (document.hidden) {
-          cancelAnimationFrame(animationId);
-        } else {
-          animate();
-        }
+      // Tymczasowe rozwiązanie - ukryj/pokaż karty
+      const cards = document.querySelectorAll('.file-card');
+      cards.forEach((card, i) => {
+        const docName = documents[i].name.toLowerCase();
+        card.style.display = docName.includes(term) ? 'block' : 'none';
       });
     });
+    
+    // Zamykanie modalu po kliknięciu poza nim
+    window.onclick = function(event) {
+      const modal = document.getElementById('addModal');
+      if (event.target == modal) {
+        closeModal();
+      }
+    }
+    
+    // Inicjalizacja
+    console.log('Inicjalizacja');
+    renderFiles();
   </script>
 </body>
 </html>
