@@ -612,38 +612,50 @@
       }
     });
     
-    addFileForm.addEventListener('submit', async (e) => {
+    addFileForm.addEventListener('submit', (e) => {
       e.preventDefault();
       
       const fileName = document.getElementById('fileName').value;
       const fileType = document.querySelector('input[name="fileType"]:checked').value;
       
-      let newFile;
-      
       if (fileType === 'link') {
-        newFile = {
+        // Dodawanie linku
+        const newFile = {
           name: fileName,
           url: document.getElementById('fileUrl').value,
           type: 'link',
           dateAdded: new Date().toISOString()
         };
-      } else {
-        const file = fileUploadInput.files[0];
-        if (!file) return;
         
-        // Sprawdź rozmiar pliku (4MB limit)
-        const maxSize = 4 * 1024 * 1024; // 4MB
-        if (file.size > maxSize) {
-          alert(`Plik jest za duży (${(file.size / 1024 / 1024).toFixed(1)}MB). 
-                 Maximum to 4MB. 
-                 Dla większych plików użyj Google Drive i dodaj link.`);
+        documents.push(newFile);
+        localStorage.setItem('documents', JSON.stringify(documents));
+        
+        renderFiles();
+        addModal.style.display = 'none';
+        addFileForm.reset();
+        urlGroup.style.display = 'block';
+        uploadGroup.style.display = 'none';
+        
+      } else {
+        // Dodawanie pliku
+        const file = fileUploadInput.files[0];
+        
+        if (!file) {
+          alert('Wybierz plik!');
           return;
         }
         
-        // Konwersja pliku do Base64
+        // Sprawdź rozmiar
+        if (file.size > 4 * 1024 * 1024) {
+          alert(`Plik za duży: ${(file.size / 1024 / 1024).toFixed(1)}MB. Max 4MB.`);
+          return;
+        }
+        
+        // Czytaj plik
         const reader = new FileReader();
+        
         reader.onload = function(e) {
-          newFile = {
+          const newFile = {
             name: fileName,
             data: e.target.result,
             type: 'upload',
@@ -653,7 +665,15 @@
           };
           
           documents.push(newFile);
-          localStorage.setItem('documents', JSON.stringify(documents));
+          
+          try {
+            localStorage.setItem('documents', JSON.stringify(documents));
+            console.log('Dokument zapisany:', newFile.name);
+          } catch (err) {
+            alert('Błąd zapisu. Możliwe że brakuje miejsca w localStorage.');
+            console.error(err);
+            return;
+          }
           
           renderFiles();
           addModal.style.display = 'none';
@@ -661,16 +681,14 @@
           urlGroup.style.display = 'block';
           uploadGroup.style.display = 'none';
         };
+        
+        reader.onerror = function() {
+          alert('Błąd podczas wczytywania pliku.');
+        };
+        
+        // Rozpocznij czytanie
         reader.readAsDataURL(file);
-        return;
       }
-      
-      documents.push(newFile);
-      localStorage.setItem('documents', JSON.stringify(documents));
-      
-      renderFiles();
-      addModal.style.display = 'none';
-      addFileForm.reset();
     });
     
     // Usuwanie pliku
